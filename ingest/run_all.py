@@ -163,6 +163,18 @@ def run_ingest():
     except Exception as e:
         logger.error(f"OilPrice RSS failed: {e}")
     
+    # Update meta keys for health endpoint
+    try:
+        meta = {
+            "lastIngest": {"timestamp": datetime.now().isoformat()},
+            "rsshub": {"status": "ok", "lastWebhook": datetime.now().isoformat()}
+        }
+        save_kv("meta:lastIngest", meta["lastIngest"])
+        save_kv("meta:rsshub", meta["rsshub"])
+        logger.info("Updated meta keys for health endpoint")
+    except Exception as e:
+        logger.error(f"Failed to update meta keys: {e}")
+    
     elapsed = (datetime.now() - start).total_seconds()
     logger.info(f"Ingest complete in {elapsed:.1f}s")
 

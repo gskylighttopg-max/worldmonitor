@@ -17,8 +17,8 @@ preview_id = "<YOUR_PREVIEW_KV_NAMESPACE_ID>"
 # 3. Run: wrangler kv:namespace create "NEWS_KV" --preview
 # 4. Copy the returned ID to 'preview_id' above
 
-[triggers]
-crons = ["*/2 * * * *"]
+# Cron trigger removed - ingest runs via GitHub Actions every 15 min
+# Cloudflare Worker is an API server, not the ingest script
 
 [build]
 command = ""
