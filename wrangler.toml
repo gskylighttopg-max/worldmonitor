@@ -11,6 +11,12 @@ binding = "NEWS_KV"
 id = "<YOUR_KV_NAMESPACE_ID>"
 preview_id = "<YOUR_PREVIEW_KV_NAMESPACE_ID>"
 
+# TO DEPLOY:
+# 1. Run: wrangler kv:namespace create "NEWS_KV"
+# 2. Copy the returned ID to 'id' above
+# 3. Run: wrangler kv:namespace create "NEWS_KV" --preview
+# 4. Copy the returned ID to 'preview_id' above
+
 [triggers]
 crons = ["*/2 * * * *"]
 

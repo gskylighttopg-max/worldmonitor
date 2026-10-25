@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 venv/
@@ -24,6 +25,49 @@ build/
 # IDE
 .idea/
 .vscode/
+=======
+# =============================================================================
+# WorldMonitor - Git Ignore Rules
+# =============================================================================
+
+# Ruflo local secrets and runtime data
+.env
+.env.local
+.env.*.local
+.claude-flow/data/
+.claude-flow/logs/
+.claude-flow/sessions/
+
+# Cloudflare Tunnel credentials (each developer has their own)
+.cloudflared/*.json
+.cloudflared/*.pem
+.cloudflared/cert.pem
+*.tunnel.yml
+
+# 1Password/Bitwarden
+.op/
+.bitwarden/
+
+# Node.js dependencies
+node_modules/
+.pnpm-store/
+.pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# IDE/Editor
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+>>>>>>> 74c655ffc68a8acc0ef3e754c6d855e934908f42
 *.swp
 *.swo
 *~
@@ -34,6 +78,7 @@ Thumbs.db
 
 # Logs
 *.log
+<<<<<<< HEAD
 logs/
 
 # Data
@@ -55,3 +100,53 @@ data/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+=======
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Docker
+.docker/
+
+# Vercel
+.vercel
+
+# Turbo
+.turbo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Ruflo specific
+.swarm/
+.mcp.json.local
+
+# Secrets (never commit!)
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# =============================================================================
+# ALLOWED (committed to repo)
+# =============================================================================
+# .cloudflared/config.yml (template, no credentials)
+# .devcontainer/ (full config)
+# scripts/ (all scripts)
+# docker-compose.yml
+# .env.example
+# TEAM_ONBOARDING.md
+# COLLABORATION_SETUP.md
+# .vscode/ (settings, tasks, launch, extensions)
+>>>>>>> 74c655ffc68a8acc0ef3e754c6d855e934908f42

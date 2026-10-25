@@ -1,0 +1,236 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "WorldMonitor: Start All Services",
+      "detail": "Starts website, MCP wrapper, Ruflo daemon, swarm, and Cloudflare tunnel",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/start-all.bat",
+      "windows": {
+        "command": "${workspaceFolder}/scripts/start-all.bat"
+      },
+      "linux": {
+        "command": "bash ${workspaceFolder}/scripts/start-all.sh"
+      },
+      "osx": {
+        "command": "bash ${workspaceFolder}/scripts/start-all.sh"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Start Website Dev Server",
+      "detail": "Starts the website development server on port 3000",
+      "type": "shell",
+      "command": "pnpm run dev",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Start MCP HTTP Wrapper",
+      "detail": "Starts the MCP stdio-to-HTTP wrapper on port 3001",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/scripts && npm start",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Start Ruflo Daemon & Swarm",
+      "detail": "Initializes Ruflo daemon and hierarchical swarm",
+      "type": "shell",
+      "command": "ruflo daemon start && ruflo swarm init --topology hierarchical --max-agents 8",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Start Cloudflare Tunnel",
+      "detail": "Runs Cloudflare tunnel to expose local ports",
+      "type": "shell",
+      "command": "cloudflared tunnel run worldmonitor-dev",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Stop All Services",
+      "detail": "Stops Ruflo daemon and kills background processes",
+      "type": "shell",
+      "command": "ruflo daemon stop",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Ruflo Status",
+      "detail": "Shows current Ruflo system status",
+      "type": "shell",
+      "command": "ruflo status",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Spawn Research Agent",
+      "detail": "Spawns a researcher agent for analytical tasks",
+      "type": "shell",
+      "command": "ruflo agent spawn -t researcher --name ${input:agentName}",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Create Research Task",
+      "detail": "Creates a research task and assigns to agent",
+      "type": "shell",
+      "command": "ruflo task create --type research --description \"${input:taskDescription}\" --priority high",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Memory Search",
+      "detail": "Semantic search across Ruflo memory namespaces",
+      "type": "shell",
+      "command": "ruflo memory search --query \"${input:searchQuery}\" --namespace ${input:namespace}",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Run Intelligence Pipeline",
+      "detail": "Runs 4-step intelligence pipeline (RETRIEVE→JUDGE→DISTILL→CONSOLIDATE)",
+      "type": "shell",
+      "command": "ruflo mcp exec -t hooks_intelligence_unified -p '{\"operation\":\"retrieve\",\"query\":\"${input:query}\"}'",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Install Dependencies",
+      "detail": "Installs all project dependencies",
+      "type": "shell",
+      "command": "pnpm install && cd scripts && pnpm install",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WorldMonitor: Doctor (Fix Issues)",
+      "detail": "Runs Ruflo doctor to fix common issues",
+      "type": "shell",
+      "command": "ruflo doctor --fix",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "agentName",
+      "type": "promptString",
+      "description": "Agent name (e.g., energy-researcher, trade-analyst)",
+      "default": "researcher-1"
+    },
+    {
+      "id": "taskDescription",
+      "type": "promptString",
+      "description": "Task description",
+      "default": "Research current energy market developments"
+    },
+    {
+      "id": "searchQuery",
+      "type": "promptString",
+      "description": "Search query",
+      "default": "energy trade tariff conflict"
+    },
+    {
+      "id": "namespace",
+      "type": "pickString",
+      "description": "Memory namespace",
+      "options": [
+        "energy-research",
+        "trade-research",
+        "conflict-analysis",
+        "patterns",
+        "general"
+      ],
+      "default": "conflict-analysis"
+    },
+    {
+      "id": "query",
+      "type": "promptString",
+      "description": "Intelligence pipeline query",
+      "default": "energy trade tariff conflict renewable transition"
+    }
+  ]
+}

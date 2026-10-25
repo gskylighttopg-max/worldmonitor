@@ -58,6 +58,17 @@ if ! wrangler whoami &> /dev/null; then
     wrangler login
 fi
 
+# Create KV namespace if needed
+echo "🗄️  Checking KV namespace..."
+if ! wrangler kv:namespace list | grep -q "NEWS_KV"; then
+    echo "Creating KV namespace..."
+    wrangler kv:namespace create "NEWS_KV"
+    echo "⚠️  Update wrangler.toml with the returned KV namespace IDs!"
+    echo "   Then run: wrangler kv:namespace create \"NEWS_KV\" --preview"
+    echo "   Update preview_id in wrangler.toml"
+    read -p "Press Enter after updating wrangler.toml..."
+fi
+
 # Deploy
 wrangler deploy
 

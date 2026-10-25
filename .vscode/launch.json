@@ -1,0 +1,67 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "WorldMonitor: Website Dev Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "WorldMonitor: MCP HTTP Wrapper",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/mcp-http-wrapper.js",
+      "cwd": "${workspaceFolder}/scripts",
+      "console": "integratedTerminal",
+      "env": {
+        "MCP_HTTP_PORT": "3001",
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "WorldMonitor: Ruflo CLI Debug",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "ruflo",
+      "runtimeArgs": ["status"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "WorldMonitor: Attach to MCP Process",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "WorldMonitor: Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["test", "--", "--runInBand"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "WorldMonitor: Full Stack Debug",
+      "configurations": [
+        "WorldMonitor: Website Dev Server",
+        "WorldMonitor: MCP HTTP Wrapper",
+        "WorldMonitor: Ruflo CLI Debug"
+      ],
+      "stopAll": true
+    }
+  ]
+}

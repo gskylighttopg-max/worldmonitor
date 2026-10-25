@@ -1,0 +1,95 @@
+{
+  "agents": {
+    "agent-1792940618955-g66hmd": {
+      "agentId": "agent-1792940618955-g66hmd",
+      "agentType": "coder",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:03:38.955Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1792940620680-ja8hhk": {
+      "agentId": "agent-1792940620680-ja8hhk",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:03:40.680Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1792940622767-gs3hwr": {
+      "agentId": "agent-1792940622767-gs3hwr",
+      "agentType": "tester",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:03:42.767Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1792942947520-qve8cc": {
+      "agentId": "agent-1792942947520-qve8cc",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:42:27.521Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1792942950412-fn7ko2": {
+      "agentId": "agent-1792942950412-fn7ko2",
+      "agentType": "researcher",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:42:30.412Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1792942952295-twmjw8": {
+      "agentId": "agent-1792942952295-twmjw8",
+      "agentType": "analyst",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "timeout": 300,
+        "autoTools": true
+      },
+      "createdAt": "2026-10-25T15:42:32.295Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    }
+  },
+  "version": "3.0.0"
+}

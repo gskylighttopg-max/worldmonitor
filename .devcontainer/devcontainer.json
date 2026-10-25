@@ -1,0 +1,67 @@
+{
+  "name": "WorldMonitor Dev Environment",
+  "description": "Shared dev container for WorldMonitor - website + Ruflo MCP servers",
+  
+  // Use the official Node.js image with Docker
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bookworm",
+  
+  // Or build from Dockerfile for custom setup
+  // "build": { "dockerfile": "Dockerfile" },
+  
+  // Features to add
+  "features": {
+    "ghcr.io/devcontainers/features/cloudflare-cloudflared:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" }
+  },
+  
+  // Forward ports (auto-forwarded in Codespaces)
+  "forwardPorts": [3000, 3001, 3002],
+  "portsAttributes": {
+    "3000": { "label": "Website Dev Server", "onAutoForward": "notify" },
+    "3001": { "label": "MCP HTTP Wrapper", "onAutoForward": "notify" },
+    "3002": { "label": "Ruflo API", "onAutoForward": "silent" }
+  },
+  
+  // Post-create setup
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  
+  // Customize VS Code
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.live-share",
+        "github.codespaces",
+        "ms-azuretools.vscode-docker",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "liveShare.startOnStartup": true
+      }
+    }
+  },
+  
+  // Environment variables (secrets injected at runtime via Codespaces secrets)
+  "remoteEnv": {
+    "NODE_ENV": "development",
+    "MCP_HTTP_PORT": "3001"
+  },
+  
+  // Run as non-root user
+  "remoteUser": "node",
+  
+  // Mount workspace
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  
+  // Container lifecycle
+  "postStartCommand": "echo 'Dev container ready! Run: npm run dev:website & npm run dev:mcp'",
+  
+  // Git configuration
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ]
+}

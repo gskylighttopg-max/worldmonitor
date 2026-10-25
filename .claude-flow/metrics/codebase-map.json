@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-25T18:18:22.498Z",
+  "projectRoot": "C:\\Users\\HP\\ruflo-demo",
+  "structure": {
+    "hasPackageJson": false,
+    "hasTsConfig": false,
+    "hasClaudeConfig": true,
+    "hasClaudeFlow": true
+  },
+  "scannedAt": 1792952302498
+}

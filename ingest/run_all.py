@@ -16,9 +16,11 @@ from eia import fetch_eia
 from rigcount import fetch_rigcount
 from wto import fetch_wto
 from comtrade import fetch_comtrade
-from usitc import fetch_usitc
+from usitc import fetch_usitc_tariffs
 from yahoo import fetch_yahoo
 from oilrss import fetch_oilprice
+from ais import fetch_ais
+from alphavantage import fetch_all_commodities
 from utils.kv_client import KVClient
 
 logging.basicConfig(
@@ -103,6 +105,23 @@ def run_ingest():
         save_kv("oil:rigs", rig_data)
     except Exception as e:
         logger.error(f"RigCount failed: {e}")
+    
+    try:
+        logger.info("Fetching AIS vessel data...")
+        ais_data = fetch_ais()
+        save_local("vessels_ais", ais_data)
+        save_kv("vessels:ais", ais_data)
+    except Exception as e:
+        logger.error(f"AIS failed: {e}")
+    
+    try:
+        logger.info("Fetching Alpha Vantage commodities...")
+        av_data = fetch_all_commodities()
+        for symbol, data in av_data.items():
+            save_local(f"commodity_{symbol}", data)
+            save_kv(f"commodity:{symbol}", data)
+    except Exception as e:
+        logger.error(f"Alpha Vantage failed: {e}")
     
     try:
         logger.info("Fetching WTO...")
