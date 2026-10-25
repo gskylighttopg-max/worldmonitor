@@ -1,0 +1,107 @@
+{
+  // WorldMonitor VS Code Settings
+  // Optimized for collaborative development with Live Share
+  
+  // Live Share settings
+  "liveshare.startOnStartup": true,
+  "liveshare.guestApprovalRequired": false,
+  "liveshare.audio.default.enabled": true,
+  "liveshare.featureSet": "insiders",
+  
+  // Terminal settings for shared sessions
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.enablePersistentSessions": true,
+  "terminal.integrated.persistentSessionReviveProcess": "onExit",
+  
+  // Git settings for team workflow
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.autofetchPeriod": 60,
+  "git.confirmSync": false,
+  "git.rebaseWhenSyncing": true,
+  
+  // Editor settings for collaboration
+  "editor.cursorBlinking": "phase",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.smoothScrolling": true,
+  "editor.minimap.enabled": true,
+  "editor.minimap.showSlider": "always",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.guides.indentation": true,
+  
+  // File handling
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.pnpm-store/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true
+  },
+  
+  // Search exclusions
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.pnpm-store": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/.git": true,
+    "**/.claude-flow": true,
+    "**/.swarm": true
+  },
+  
+  // TypeScript/JavaScript
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  
+  // ESLint/Prettier
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.prettier": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.requireConfig": true,
+  
+  // Extensions recommendations
+  "extensions.ignoreRecommendations": false,
+  
+  // Workspace trust
+  "security.workspace.trust.enabled": true,
+  
+  // Ruflo-specific
+  "ruflol.mcpPort": 3001,
+  "ruflol.websitePort": 3000,
+  
+  // Cloudflare Tunnel
+  "cloudflare.tunnelConfigPath": "~/.cloudflared/config.yml",
+  
+  // 1Password CLI
+  "op.biometricUnlock": true,
+  
+  // Debug
+  "debug.console.fontSize": 13,
+  "debug.toolBar.location": "floating",
+  
+  // Extensions to recommend to team
+  "extensions.recommendations": [
+    "ms-vscode.live-share",
+    "github.codespaces",
+    "ms-azuretools.vscode-docker",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "github.vscode-github-actions",
+    "ms-vscode-remote.remote-containers"
+  ]
+}

@@ -1,0 +1,37 @@
+# Cloudflare Tunnel Configuration for WorldMonitor Collaborative Dev
+# Run: cloudflared tunnel run worldmonitor-dev
+# Each developer runs this locally pointing to their own localhost
+
+tunnel: <TUNNEL_ID_FROM_CLOUDFLARED_TUNNEL_CREATE>
+credentials-file: ~/.cloudflared/<TUNNEL_ID>.json
+
+# Ingress rules - routes traffic to local services
+ingress:
+  # MCP Server (stdio wrapped via HTTP on port 3001)
+  - hostname: mcp.worldmonitor.dev
+    service: http://localhost:3001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      keepAliveTimeout: 90s
+
+  # Website Dev Server (Next.js/Vite on port 3000)
+  - hostname: app.worldmonitor.dev
+    service: http://localhost:3000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      keepAliveTimeout: 90s
+
+  # Ruflo CLI API (if exposing on port 3002)
+  - hostname: api.worldmonitor.dev
+    service: http://localhost:3002
+    originRequest:
+      noTLSVerify: true
+
+  # Fallback 404
+  - service: http_status:404
+
+# Optional: Warp routing for team access (free up to 50 users)
+# warp-routing:
+#   enabled: true

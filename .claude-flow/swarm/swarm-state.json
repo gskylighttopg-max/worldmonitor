@@ -1,0 +1,30 @@
+{
+  "swarms": {
+    "swarm-1792940610770-dtm2uv": {
+      "swarmId": "swarm-1792940610770-dtm2uv",
+      "topology": "hierarchical",
+      "maxAgents": 8,
+      "status": "running",
+      "agents": [
+        "agent-1792940618955-g66hmd",
+        "agent-1792940620680-ja8hhk",
+        "agent-1792940622767-gs3hwr",
+        "agent-1792942947520-qve8cc",
+        "agent-1792942950412-fn7ko2",
+        "agent-1792942952295-twmjw8"
+      ],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical",
+        "maxAgents": 8,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-10-25T15:03:30.770Z",
+      "updatedAt": "2026-10-25T15:03:30.770Z"
+    }
+  },
+  "version": "3.0.0"
+}

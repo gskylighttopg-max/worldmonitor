@@ -1,0 +1,65 @@
+{
+  "tasks": {
+    "task-1792940702757-phi5qa": {
+      "taskId": "task-1792940702757-phi5qa",
+      "type": "implementation",
+      "description": "Create a simple Express.js API with JWT auth",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 0,
+      "assignedTo": [
+        "my-coder"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-25T15:05:02.757Z",
+      "startedAt": "2026-10-25T15:05:08.128Z",
+      "completedAt": null
+    },
+    "task-1792942966217-zoak3d": {
+      "taskId": "task-1792942966217-zoak3d",
+      "type": "research",
+      "description": "Research current global energy market developments: oil prices, renewable transition, geopolitical energy conflicts",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 0,
+      "assignedTo": [
+        "energy-researcher"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-25T15:42:46.217Z",
+      "startedAt": "2026-10-25T15:42:50.701Z",
+      "completedAt": null
+    },
+    "task-1792942999963-0h2on5": {
+      "taskId": "task-1792942999963-0h2on5",
+      "type": "research",
+      "description": "Research current global trade developments: tariffs, supply chain shifts, trade agreements, sanctions",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 0,
+      "assignedTo": [
+        "trade-researcher"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-25T15:43:19.963Z",
+      "startedAt": "2026-10-25T15:43:28.585Z",
+      "completedAt": null
+    },
+    "task-1792943028563-cppw01": {
+      "taskId": "task-1792943028563-cppw01",
+      "type": "research",
+      "description": "Analyze conflicting narratives between energy and trade news sources. Identify contradictions in framing, data interpretation, and policy recommendations.",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 0,
+      "assignedTo": [
+        "conflict-analyst"
+      ],
+      "tags": [],
+      "createdAt": "2026-10-25T15:43:48.563Z",
+      "startedAt": "2026-10-25T15:43:58.816Z",
+      "completedAt": null
+    }
+  },
+  "version": "3.0.0"
+}
