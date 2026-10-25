@@ -1,0 +1,17 @@
+{
+  "name": "worldmonitor-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "maplibre-gl": "^4.7.1"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}
