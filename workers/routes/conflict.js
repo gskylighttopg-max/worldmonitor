@@ -61,7 +61,7 @@ export async function conflictRoute(request, env) {
         themes: f.themes,
         conflictScore: f.conflictScore
       }
-    }),
+    })),
     meta: {
       total: features.length,
       lastUpdated: new Date().toISOString()

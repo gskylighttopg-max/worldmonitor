@@ -18,19 +18,21 @@ export function addHeatmapLayer(map, sourceId, data, options = {}) {
 
   if (!data || !data.features) {
     console.warn('No data for heatmap');
-    return { updateData: () => {} };
+    return { updateData: function() {} };
   }
 
-  const geojson = {
+  var geojson = {
     type: 'FeatureCollection',
     features: data.features
-      .filter(f => f.geometry && f.geometry.coordinates)
-      .map(f => ({
-        ...f,
-        properties: {
-          ...f.properties,
-          weight: f.properties[weightProperty] || 1
-        }
+      .filter(function(f) { return f.geometry && f.geometry.coordinates; })
+      .map(function(f) {
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            weight: f.properties[weightProperty] || 1
+          }
+        };
       })
   };
 
@@ -58,25 +60,27 @@ export function addHeatmapLayer(map, sourceId, data, options = {}) {
     map.getSource(sourceId).setData({
       type: 'FeatureCollection',
       features: data.features
-        .filter(f => f.geometry && f.geometry.coordinates)
-        .map(f => ({
-          ...f,
-          properties: {
-            ...f.properties,
-            weight: f.properties[weightProperty] || 1
-          }
+        .filter(function(f) { return f.geometry && f.geometry.coordinates; })
+        .map(function(f) {
+          return {
+            ...f,
+            properties: {
+              ...f.properties,
+              weight: f.properties[weightProperty] || 1
+            }
+          };
         })
     });
   }
 
   return {
-    updateData: (newData) => updateHeatmapLayer(map, sourceId, newData, options),
-    setIntensity: (intensity) => {
+    updateData: function(newData) { return updateHeatmapLayer(map, sourceId, newData, options); },
+    setIntensity: function(intensity) {
       if (map.getLayer(sourceId)) {
         map.setPaintProperty(sourceId, 'heatmap-intensity', intensity);
       }
     },
-    setRadius: (radius) => {
+    setRadius: function(radius) {
       if (map.getLayer(sourceId)) {
         map.setPaintProperty(sourceId, 'heatmap-radius', radius);
       }
@@ -85,16 +89,20 @@ export function addHeatmapLayer(map, sourceId, data, options = {}) {
 }
 
 function updateHeatmapLayer(map, sourceId, newData, options) {
-  const geojson = {
+  var weightProperty = options && options.weightProperty ? options.weightProperty : 'severity';
+  
+  var geojson = {
     type: 'FeatureCollection',
     features: newData.features
-      .filter(f => f.geometry && f.geometry.coordinates)
-      .map(f => ({
-        ...f,
-        properties: {
-          ...f.properties,
-          weight: f.properties[options.weightProperty] || 1
-        }
+      .filter(function(f) { return f.geometry && f.geometry.coordinates; })
+      .map(function(f) {
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            weight: f.properties[weightProperty] || 1
+          }
+        };
       })
   };
 

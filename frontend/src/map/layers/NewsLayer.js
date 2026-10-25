@@ -3,26 +3,28 @@ import maplibregl from 'maplibre-gl';
 export function addNewsLayer(map, sourceId, data) {
   if (!data || !data.articles) {
     console.warn('No news data provided');
-    return { updateData: () => {} };
+    return { updateData: function() {} };
   }
 
-  const geojson = {
+  var geojson = {
     type: 'FeatureCollection',
     features: data.articles
-      .filter(a => a.lat && a.lng)
-      .map(a => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
-        properties: {
-          id: a.id,
-          title: a.title,
-          url: a.url,
-          source: a.source,
-          published: a.published,
-          sentiment: a.sentiment,
-          description: a.description,
-          icon: '📰'
-        }
+      .filter(function(a) { return a.lat && a.lng; })
+      .map(function(a) {
+        return {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
+          properties: {
+            id: a.id,
+            title: a.title,
+            url: a.url,
+            source: a.source,
+            published: a.published,
+            sentiment: a.sentiment,
+            description: a.description,
+            icon: '📰'
+          }
+        };
       })
   };
 
@@ -37,7 +39,7 @@ export function addNewsLayer(map, sourceId, data) {
 
     // News clusters
     map.addLayer({
-      id: `${sourceId}-clusters`,
+      id: sourceId + '-clusters',
       type: 'circle',
       source: sourceId,
       filter: ['has', 'point_count'],
@@ -55,7 +57,7 @@ export function addNewsLayer(map, sourceId, data) {
     });
 
     map.addLayer({
-      id: `${sourceId}-cluster-count`,
+      id: sourceId + '-cluster-count',
       type: 'symbol',
       source: sourceId,
       filter: ['has', 'point_count'],
@@ -73,7 +75,7 @@ export function addNewsLayer(map, sourceId, data) {
 
     // News icons
     map.addLayer({
-      id: `${sourceId}-unclustered`,
+      id: sourceId + '-unclustered',
       type: 'symbol',
       source: sourceId,
       filter: ['!', ['has', 'point_count']],
@@ -86,32 +88,32 @@ export function addNewsLayer(map, sourceId, data) {
     });
 
     // Click handlers
-    map.on('click', `${sourceId}-unclustered`, (e) => {
-      const props = e.features[0].properties;
+    map.on('click', sourceId + '-unclustered', function(e) {
+      var props = e.features[0].properties;
       showNewsPopup(e.originalEvent.target, e.lngLat, props);
     });
 
-    map.on('click', `${sourceId}-clusters`, (e) => {
-      const source = map.getSource(sourceId);
-      const clusterId = e.features[0].properties.cluster_id;
+    map.on('click', sourceId + '-clusters', function(e) {
+      var source = map.getSource(sourceId);
+      var clusterId = e.features[0].properties.cluster_id;
       
-      source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+      source.getClusterExpansionZoom(clusterId, function(err, zoom) {
         if (!err) map.easeTo({ center: e.lngLat, zoom: zoom + 1 });
       });
 
-      source.getClusterLeaves(clusterId, 10, 0, (err, features) => {
+      source.getClusterLeaves(clusterId, 10, 0, function(err, features) {
         if (!err && features.length) {
-          showClusterNewsPopup(e.originalEvent.target, e.lngLat, features.map(f => f.properties));
+          showClusterNewsPopup(e.originalEvent.target, e.lngLat, features.map(function(f) { return f.properties; }));
         }
       });
     });
 
     // Hover effects
-    ['news-unclustered', 'news-clusters'].forEach(layer => {
-      map.on('mouseenter', layer, () => {
+    ['news-unclustered', 'news-clusters'].forEach(function(layer) {
+      map.on('mouseenter', layer, function() {
         map.getCanvas().style.cursor = 'pointer';
       });
-      map.on('mouseleave', layer, () => {
+      map.on('mouseleave', layer, function() {
         map.getCanvas().style.cursor = '';
       });
     });
@@ -121,8 +123,80 @@ export function addNewsLayer(map, sourceId, data) {
     map.getSource(sourceId).setData({
       type: 'FeatureCollection',
       features: data.articles
-        .filter(a => a.lat && a.lng)
-        .map(a => ({
+        .filter(function(a) { return a.lat && a.lng; })
+        .map(function(a) {
+          return {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
+            properties: {
+              id: a.id,
+              title: a.title,
+              url: a.url,
+              source: a.source,
+              published: a.published,
+              sentiment: a.sentiment,
+              description: a.description,
+              icon: '📰'
+            }
+          };
+        })
+    });
+  }
+
+  return {
+    updateData: function(newData) { return updateNewsLayer(map, sourceId, newData); }
+  };
+}
+
+function showNewsPopup(map, lngLat, article) {
+  var html = 
+    '<div class="wm-popup article-popup">' +
+      '<h3>' + article.title + '</h3>' +
+      '<div class="article-meta">' +
+        '<span class="source">' + article.source + '</span>' +
+        '<span class="time">' + formatTime(article.published) + '</span>' +
+      '</div>' +
+      (article.description ? '<p class="description">' + article.description + '</p>' : '') +
+      '<a href="' + article.url + '" target="_blank" class="read-more">Read Full Article \u2192</a>' +
+    '</div>';
+
+  new maplibregl.Popup({ closeButton: true, maxWidth: 400 })
+    .setLngLat(lngLat)
+    .setHTML(html)
+    .addTo(map);
+}
+
+function showClusterNewsPopup(map, lngLat, articles) {
+  var html = 
+    '<div class="wm-popup cluster-popup">' +
+      '<h3>' + articles.length + ' Articles</h3>' +
+      '<ul class="article-list">' +
+        articles.map(function(a) {
+          return 
+            '<li class="article-item">' +
+              '<a href="' + a.url + '" target="_blank" rel="noopener">' +
+                '<span class="article-title">' + a.title + '</span>' +
+                '<span class="article-source">' + a.source + '</span>' +
+                '<span class="article-time">' + formatTime(a.published) + '</span>' +
+              '</a>' +
+            '</li>';
+        }).join('') +
+      '</ul>' +
+    '</div>';
+
+  new maplibregl.Popup({ closeButton: true, maxWidth: 320 })
+    .setLngLat(lngLat)
+    .setHTML(html)
+    .addTo(map);
+}
+
+function updateNewsLayer(map, sourceId, newData) {
+  var geojson = {
+    type: 'FeatureCollection',
+    features: newData.articles
+      .filter(function(a) { return a.lat && a.lng; })
+      .map(function(a) {
+        return {
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
           properties: {
@@ -135,76 +209,7 @@ export function addNewsLayer(map, sourceId, data) {
             description: a.description,
             icon: '📰'
           }
-        })
-    });
-  }
-
-  return {
-    updateData: (newData) => updateNewsLayer(map, sourceId, newData)
-  };
-}
-
-function showNewsPopup(map, lngLat, article) {
-  const html = `
-    <div class="wm-popup article-popup">
-      <h3>${article.title}</h3>
-      <div class="article-meta">
-        <span class="source">${article.source}</span>
-        <span class="time">${formatTime(article.published)}</span>
-      </div>
-      ${article.description ? `<p class="description">${article.description}</p>` : ''}
-      <a href="${article.url}" target="_blank" class="read-more">Read Full Article →</a>
-    </div>
-  `;
-
-  new maplibregl.Popup({ closeButton: true, maxWidth: '400px' })
-    .setLngLat(lngLat)
-    .setHTML(html)
-    .addTo(map);
-}
-
-function showClusterNewsPopup(map, lngLat, articles) {
-  const html = `
-    <div class="wm-popup cluster-popup">
-      <h3>${articles.length} Articles</h3>
-      <ul class="article-list">
-        ${articles.map(a => `
-          <li class="article-item">
-            <a href="${a.url}" target="_blank" rel="noopener">
-              <span class="article-title">${a.title}</span>
-              <span class="article-source">${a.source}</span>
-              <span class="article-time">${formatTime(a.published)}</span>
-            </a>
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `;
-
-  new maplibregl.Popup({ closeButton: true, maxWidth: '320px' })
-    .setLngLat(lngLat)
-    .setHTML(html)
-    .addTo(map);
-}
-
-function updateNewsLayer(map, sourceId, newData) {
-  const geojson = {
-    type: 'FeatureCollection',
-    features: newData.articles
-      .filter(a => a.lat && a.lng)
-      .map(a => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
-        properties: {
-          id: a.id,
-          title: a.title,
-          url: a.url,
-          source: a.source,
-          published: a.published,
-          sentiment: a.sentiment,
-          description: a.description,
-          icon: '📰'
-        }
+        };
       })
   };
 
@@ -216,19 +221,19 @@ function updateNewsLayer(map, sourceId, newData) {
 function formatTime(dateStr) {
   if (!dateStr) return '';
   try {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diff = now - date;
-    const mins = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    var date = new Date(dateStr);
+    var now = new Date();
+    var diff = now - date;
+    var mins = Math.floor(diff / 60000);
+    var hours = Math.floor(diff / 3600000);
+    var days = Math.floor(diff / 86400000);
     
     if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (mins < 60) return mins + 'm ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days < 7) return days + 'd ago';
     return date.toLocaleDateString();
-  } catch {
+  } catch (e) {
     return '';
   }
 }

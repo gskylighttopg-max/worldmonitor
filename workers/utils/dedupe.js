@@ -9,7 +9,6 @@ export function dedupe(items, keyFn = item => item.id || item.url || item.guid) 
 }
 
 export function clusterConflicts(items, maxDistanceKm = 50, timeWindowHours = 6) {
-  // Simple clustering by proximity and time
   const clusters = [];
   const used = new Set();
   
@@ -55,7 +54,7 @@ function haversine(lat1, lon1, lat2, lon2) {
   const toRad = d => d * Math.PI / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin((lon2-lon1)*Math.PI/360)**2;
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
@@ -96,8 +95,8 @@ export function simHash(text, bits = 64) {
 export function clusterBySimHash(items, threshold = 0.85) {
   const hashes = items.map(item => ({
     ...item,
-    hash: simHash(item.title || item.title || '')
-  });
+    hash: simHash(item.title || '')
+  }));
   
   const clusters = [];
   const used = new Set();
