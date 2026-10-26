@@ -1,5 +1,7 @@
 import { MapLibreMap } from './map/MapLibreMap.js';
 import { API_URL } from './api.js';
+import { NewsFilterService } from './services/NewsFilterService.js';
+import { ChatInterface } from './ui/ChatInterface.js';
 
 async function initApp() {
   try {
@@ -8,6 +10,14 @@ async function initApp() {
       zoom: 1.5,
       style: 'https://demotiles.maplibre.org/style.json'
     });
+
+    // Initialize services
+    const newsFilterService = new NewsFilterService();
+    const chatInterface = new ChatInterface('chat-container', map);
+
+    // Make services globally accessible
+    window.newsFilterService = newsFilterService;
+    window.chatInterface = chatInterface;
 
     // Load initial data
     await loadAllData(map);
@@ -60,6 +70,14 @@ async function loadAllData(map) {
       window.newsLayer.updateData(news);
     } else {
       window.newsLayer = map.addNewsLayer(news);
+    }
+    
+    // Load news into filter service
+    try {
+      const newsData = await fetch(`${API_URL}/api/news`).then(r => r.json());
+      window.newsFilterService.loadNews(newsData);
+    } catch (e) {
+      console.error('Failed to load news into filter service:', e);
     }
     
     updateLastUpdated();
