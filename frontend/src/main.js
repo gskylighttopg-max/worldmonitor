@@ -1,7 +1,7 @@
 import { MapLibreMap } from './map/MapLibreMap.js';
 import { API_URL } from './api.js';
 import { NewsFilterService } from './services/NewsFilterService.js';
-import { ChatInterface } from './ui/ChatInterface.js';
+import { FilterUI } from './ui/FilterUI.js';
 
 async function initApp() {
   try {
@@ -13,11 +13,11 @@ async function initApp() {
 
     // Initialize services
     const newsFilterService = new NewsFilterService();
-    const chatInterface = new ChatInterface('chat-container', map);
+    const filterUI = new FilterUI('filter-panel', map);
 
     // Make services globally accessible
     window.newsFilterService = newsFilterService;
-    window.chatInterface = chatInterface;
+    window.filterUI = filterUI;
 
     // Load initial data
     await loadAllData(map);

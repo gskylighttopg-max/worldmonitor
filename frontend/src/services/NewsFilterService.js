@@ -3,9 +3,10 @@ import { fetchAPI } from './api.js';
 export class NewsFilterService {
   constructor() {
     this.selectedCountries = new Set();
-    this.selectedCategories = new Set();
+    this.selectedCategories = new Set(['conflict']); // Default to conflict
     this.allNews = [];
     this.filteredNews = [];
+    this.currentCategory = 'conflict'; // Always one category active
   }
 
   setSelectedCountries(countries) {
@@ -15,6 +16,20 @@ export class NewsFilterService {
 
   setSelectedCategories(categories) {
     this.selectedCategories = new Set(categories);
+    // Always keep at least one category
+    if (categories.size === 0) {
+      this.selectedCategories.add('conflict');
+    }
+    // Track current category for UI
+    this.currentCategory = Array.from(this.selectedCategories)[0] || 'conflict';
+    this.applyFilters();
+  }
+
+  // Set single category (for tab switching)
+  setCategory(category) {
+    this.selectedCategories.clear();
+    this.selectedCategories.add(category);
+    this.currentCategory = category;
     this.applyFilters();
   }
 
@@ -43,13 +58,8 @@ export class NewsFilterService {
   applyFilters() {
     let filtered = this.allNews;
 
-    // Category filter
-    if (this.selectedCategories.size > 0) {
-      filtered = filtered.filter(item => this.selectedCategories.has(item.category));
-    } else {
-      // If no category selected, show nothing
-      filtered = [];
-    }
+    // Category filter - always filter by current category
+    filtered = filtered.filter(item => this.selectedCategories.has(item.category));
 
     // Country filter
     if (this.selectedCountries.size > 0) {
@@ -67,7 +77,6 @@ export class NewsFilterService {
   }
 
   extractCountry(item) {
-    // Extract country from various possible fields
     return item.country || item.countryCode || item.sourceCountry || 
            (item.properties && item.properties.country) ||
            this.inferCountryFromSource(item.source);
@@ -75,26 +84,15 @@ export class NewsFilterService {
 
   inferCountryFromSource(source) {
     const sourceCountryMap = {
-      'Reuters': 'UK',
-      'AP': 'US',
-      'BBC': 'UK',
-      'Al Jazeera': 'Qatar',
-      'France 24': 'France',
-      'DW': 'Germany',
-      'CNN': 'US',
-      'Fox News': 'US',
-      'NY Times': 'US',
-      'Al Jazeera': 'Qatar',
-      'Xinhua': 'China',
-      'RT': 'Russia',
-      'CGTN': 'China',
+      'Reuters': 'UK', 'AP': 'US', 'BBC': 'UK', 'Al Jazeera': 'Qatar',
+      'France 24': 'France', 'DW': 'Germany', 'CNN': 'US', 'Fox News': 'US',
+      'NY Times': 'US', 'Xinhua': 'China', 'RT': 'Russia', 'CGTN': 'China',
       'Al Arabiya': 'Saudi Arabia'
     };
     return sourceCountryMap[item.source] || null;
   }
 
   mixByCountry(items) {
-    // Group by country
     const byCountry = {};
     items.forEach(item => {
       const country = this.extractCountry(item);
@@ -104,7 +102,6 @@ export class NewsFilterService {
       }
     });
 
-    // Take one from each country, round-robin
     const countries = Object.keys(byCountry);
     const result = [];
     let maxItems = Math.max(...Object.values(byCountry).map(arr => arr.length));
@@ -116,7 +113,6 @@ export class NewsFilterService {
         }
       }
     }
-
     return result;
   }
 
@@ -124,17 +120,12 @@ export class NewsFilterService {
     return this.filteredNews;
   }
 
-  getAvailableCountries() {
-    const countries = new Set();
-    this.allNews.forEach(item => {
-      const country = this.extractCountry(item);
-      if (country) this.selectedCountries.add(country);
-    });
-    return Array.from(this.selectedCountries).sort();
+  getCurrentCategory() {
+    return this.currentCategory;
   }
 
   getAvailableCategories() {
-    return ['conflict', 'oil', 'energy', 'trade', 'news'];
+    return ['conflict', 'oil', 'energy', 'trade'];
   }
 }
 
