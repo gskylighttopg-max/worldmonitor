@@ -106,9 +106,10 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                 global_event_id = row.get('id')  # This is GLOBALEVENTID from query alias
                 
                 # Build descriptive title from GDELT data
-                actor1 = row.get('Actor1Name') or 'Unknown Actor'
-                actor2 = row.get('Actor2Name') or 'Unknown Actor'
-                event_code = row.get('EventCode')
+                # BigQuery Row objects support dict-style access via row['column'] or attribute access row.column
+                actor1 = row.get('Actor1Name') or row.get('actor1name') or row.get('actor1_name') or 'Unknown Actor'
+                actor2 = row.get('Actor2Name') or row.get('actor2name') or row.get('actor2_name') or 'Unknown Actor'
+                event_code = row.get('EventCode') or row.get('eventcode') or row.get('event_code')
                 
                 # Create descriptive title: "Actor1 vs Actor2 (EventCode)"
                 if actor1 and actor2 and actor1 != 'Unknown Actor' and actor2 != 'Unknown Actor':
@@ -121,13 +122,13 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                     title = "GDELT Event"
                 
                 events.append({
-                    "id": str(global_event_id) if global_event_id else row.get('SOURCEURL'),
+                    "id": str(global_event_id) if global_event_id else row.get('SOURCEURL') or row.get('sourceurl') or "",
                     "title": title,
-                    "url": row.get('SOURCEURL') or "",
+                    "url": row.get('SOURCEURL') or row.get('sourceurl') or "",
                     "source": "GDELT",
-                    "published": datetime.strptime(str(row.get('DATEADDED')), "%Y%m%d%H%M%S").isoformat() + "Z" if row.get('DATEADDED') else datetime.utcnow().isoformat() + "Z",
+                    "published": datetime.strptime(str(row.get('DATEADDED') or row.get('dateadded')), "%Y%m%d%H%M%S").isoformat() + "Z" if row.get('DATEADDED') or row.get('dateadded') else datetime.utcnow().isoformat() + "Z",
                     "language": "",
-                    "sentiment": float(row.get('AvgTone')) if row.get('AvgTone') else 0.0,
+                    "sentiment": float(row.get('AvgTone') or row.get('avgtone') or 0.0),
                     "themes": [],
                     "locations": location_name or "",
                     "source_country": country or "",
@@ -136,11 +137,11 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                     "actor1": actor1,
                     "actor2": actor2,
                     "event_code": event_code,
-                    "goldstein_scale": float(row.get('GoldsteinScale')) if row.get('GoldsteinScale') else None,
-                    "num_mentions": row.get('NumMentions'),
-                    "num_sources": row.get('NumSources'),
-                    "num_articles": row.get('NumArticles'),
-                    "quad_class": row.get('QuadClass'),
+                    "goldstein_scale": float(row.get('GoldsteinScale') or row.get('goldsteinscale') or None),
+                    "num_mentions": row.get('NumMentions') or row.get('nummentions'),
+                    "num_sources": row.get('NumSources') or row.get('numsources'),
+                    "num_articles": row.get('NumArticles') or row.get('numarticles'),
+                    "quad_class": row.get('QuadClass') or row.get('quadclass'),
                     "raw": dict(row.items())
                 })
             except Exception as e:
