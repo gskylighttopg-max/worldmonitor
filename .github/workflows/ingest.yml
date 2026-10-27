@@ -22,6 +22,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
