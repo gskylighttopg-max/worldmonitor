@@ -34,7 +34,8 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
         start_time = end_time - timedelta(hours=hours)
         
         # Query GDELT events table
-        # SQLDate is in YYYYMMDD format, we use DATEADD for time filtering
+        # DATEADDED is INT64 in format YYYYMMDDHHMMSS
+        start_ts = int(start_time.strftime('%Y%m%d%H%M%S'))
         query = f"""
         SELECT
             GlobalEventID as id,
@@ -96,7 +97,7 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
             DATEADDED,
             SOURCEURL
         FROM `gdelt-bq.gdeltv2.events`
-        WHERE DATEADDED >= '{start_time.strftime('%Y%m%d%H%M%S')}'
+        WHERE DATEADDED >= {start_ts}
         ORDER BY DATEADDED DESC
         LIMIT {max_records}
         """
