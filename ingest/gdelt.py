@@ -201,12 +201,8 @@ def fetch_gdelt_rest(hours=24, max_records=500):
 
 def fetch_gdelt(hours=24, max_records=2500):
     """
-    Main entry point - tries BigQuery first, falls back to REST.
-    For 15-min cron, use hours=1, max_records=1000 with BigQuery.
+    Main entry point - prefers REST API for better titles, falls back to BigQuery.
+    For 15-min cron, use hours=1, max_records=1000 with REST API.
     """
-    # Check if BigQuery credentials available (via GOOGLE_APPLICATION_CREDENTIALS or GCP_SERVICE_ACCOUNT_KEY)
-    if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GCP_SERVICE_ACCOUNT_KEY"):
-        # Always use BigQuery when credentials available (no rate limits)
-        return fetch_gdelt_bigquery(hours=hours, max_records=max_records)
-    else:
-        return fetch_gdelt_rest(hours=hours, max_records=min(max_records, 500))
+    # Prefer REST API for better article titles (BigQuery column access is complex)
+    return fetch_gdelt_rest(hours=hours, max_records=min(max_records, 1000))
