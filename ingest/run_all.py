@@ -51,7 +51,8 @@ def run_ingest():
     
     try:
         logger.info("Fetching GDELT...")
-        gdelt_data = fetch_gdelt(24)
+        # Use 1-hour window for 15-min cron with BigQuery (no rate limits)
+        gdelt_data = fetch_gdelt(hours=1, max_records=1000)
         save_local("conflict_gdelt", gdelt_data)
         save_kv("conflict:gdelt", gdelt_data)
     except Exception as e:

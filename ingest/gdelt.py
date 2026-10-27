@@ -197,11 +197,7 @@ def fetch_gdelt(hours=24, max_records=2500):
     """
     # Check if BigQuery credentials available
     if os.getenv("GCP_SERVICE_ACCOUNT_KEY"):
-        # Use smaller time window for frequent polling
-        if hours <= 2:
-            return fetch_gdelt_bigquery(hours=hours, max_records=max_records)
-        else:
-            # For larger windows, use REST to avoid large queries
-            return fetch_gdelt_rest(hours=hours, max_records=max_records)
+        # Always use BigQuery when credentials available (no rate limits)
+        return fetch_gdelt_bigquery(hours=hours, max_records=max_records)
     else:
         return fetch_gdelt_rest(hours=hours, max_records=min(max_records, 500))
