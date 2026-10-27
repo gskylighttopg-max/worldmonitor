@@ -6,10 +6,6 @@ from google.cloud import bigquery
 
 logger = logging.getLogger(__name__)
 
-# GDELT BigQuery tables
-# Events: gdelt-bq.gdeltv2.events (main event table)
-# GKG: gdelt-bq.gdeltv2.gkg (global knowledge graph)
-
 def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
     """
     Fetch GDELT events from BigQuery for the last N hours.
@@ -30,7 +26,7 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
         start_ts = int(start_time.strftime('%Y%m%d%H%M%S'))
         query = f"""
         SELECT
-            GlobalEventID as id,
+            GLOBALEVENTID as id,
             SQLDATE as day,
             MonthYear,
             Year,
@@ -102,32 +98,34 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
         for row in rows:
             try:
                 # Build location from ActionGeo (primary) or Actor1Geo
-                lat = row.ActionGeo_Lat or row.Actor1Geo_Lat
-                lng = row.ActionGeo_Long or row.Actor1Geo_Long
-                country = row.ActionGeo_CountryCode or row.Actor1Geo_CountryCode
-                location_name = row.ActionGeo_FullName or row.Actor1Geo_FullName
+                lat = row.get('ActionGeo_Lat') or row.get('Actor1Geo_Lat')
+                lng = row.get('ActionGeo_Long') or row.get('Actor1Geo_Long')
+                country = row.get('ActionGeo_CountryCode') or row.get('Actor1Geo_CountryCode')
+                location_name = row.get('ActionGeo_FullName') or row.get('Actor1Geo_FullName')
+                
+                global_event_id = row.get('id')  # This is GLOBALEVENTID from query alias
                 
                 events.append({
-                    "id": str(row.GlobalEventID) if row.GlobalEventID else row.SOURCEURL,
-                    "title": f"GDELT Event: {row.EventCode}" if row.EventCode else "GDELT Event",
-                    "url": row.SOURCEURL or "",
+                    "id": str(global_event_id) if global_event_id else row.get('SOURCEURL'),
+                    "title": f"GDELT Event: {row.get('EventCode')}" if row.get('EventCode') else "GDELT Event",
+                    "url": row.get('SOURCEURL') or "",
                     "source": "GDELT",
-                    "published": datetime.strptime(str(row.DATEADDED), "%Y%m%d%H%M%S").isoformat() + "Z" if row.DATEADDED else datetime.utcnow().isoformat() + "Z",
+                    "published": datetime.strptime(str(row.get('DATEADDED')), "%Y%m%d%H%M%S").isoformat() + "Z" if row.get('DATEADDED') else datetime.utcnow().isoformat() + "Z",
                     "language": "",
-                    "sentiment": float(row.AvgTone) if row.AvgTone else 0.0,
+                    "sentiment": float(row.get('AvgTone')) if row.get('AvgTone') else 0.0,
                     "themes": [],
                     "locations": location_name or "",
                     "source_country": country or "",
                     "lat": float(lat) if lat else None,
                     "lng": float(lng) if lng else None,
-                    "actor1": row.Actor1Name,
-                    "actor2": row.Actor2Name,
-                    "event_code": row.EventCode,
-                    "goldstein_scale": float(row.GoldsteinScale) if row.GoldsteinScale else None,
-                    "num_mentions": row.NumMentions,
-                    "num_sources": row.NumSources,
-                    "num_articles": row.NumArticles,
-                    "quad_class": row.QuadClass,
+                    "actor1": row.get('Actor1Name'),
+                    "actor2": row.get('Actor2Name'),
+                    "event_code": row.get('EventCode'),
+                    "goldstein_scale": float(row.get('GoldsteinScale')) if row.get('GoldsteinScale') else None,
+                    "num_mentions": row.get('NumMentions'),
+                    "num_sources": row.get('NumSources'),
+                    "num_articles": row.get('NumArticles'),
+                    "quad_class": row.get('QuadClass'),
                     "raw": dict(row.items())
                 })
             except Exception as e:
