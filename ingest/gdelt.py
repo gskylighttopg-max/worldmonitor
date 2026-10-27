@@ -98,18 +98,20 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
         for row in rows:
             try:
                 # Build location from ActionGeo (primary) or Actor1Geo
-                lat = row.get('ActionGeo_Lat') or row.get('Actor1Geo_Lat')
-                lng = row.get('ActionGeo_Long') or row.get('Actor1Geo_Long')
-                country = row.get('ActionGeo_CountryCode') or row.get('Actor1Geo_CountryCode')
-                location_name = row.get('ActionGeo_FullName') or row.get('Actor1Geo_FullName')
+                # BigQuery Row objects don't support .get() - convert to dict first
+                row_dict = dict(zip(row._fields, row))
                 
-                global_event_id = row.get('id')  # This is GLOBALEVENTID from query alias
+                lat = row_dict.get('ActionGeo_Lat') or row_dict.get('Actor1Geo_Lat')
+                lng = row_dict.get('ActionGeo_Long') or row_dict.get('Actor1Geo_Long')
+                country = row_dict.get('ActionGeo_CountryCode') or row_dict.get('Actor1Geo_CountryCode')
+                location_name = row_dict.get('ActionGeo_FullName') or row_dict.get('Actor1Geo_FullName')
+                
+                global_event_id = row_dict.get('id')
                 
                 # Build descriptive title from GDELT data
-                # BigQuery Row objects support dict-style access via row['column'] or attribute access row.column
-                actor1 = row.get('Actor1Name') or row.get('actor1name') or row.get('actor1_name') or 'Unknown Actor'
-                actor2 = row.get('Actor2Name') or row.get('actor2name') or row.get('actor2_name') or 'Unknown Actor'
-                event_code = row.get('EventCode') or row.get('eventcode') or row.get('event_code')
+                actor1 = row_dict.get('Actor1Name') or row_dict.get('actor1name') or row_dict.get('actor1_name') or 'Unknown Actor'
+                actor2 = row_dict.get('Actor2Name') or row_dict.get('actor2name') or row_dict.get('actor2_name') or 'Unknown Actor'
+                event_code = row_dict.get('EventCode') or row_dict.get('eventcode') or row_dict.get('event_code')
                 
                 # Create descriptive title: "Actor1 vs Actor2 (EventCode)"
                 if actor1 and actor2 and actor1 != 'Unknown Actor' and actor2 != 'Unknown Actor':
@@ -122,13 +124,13 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                     title = "GDELT Event"
                 
                 events.append({
-                    "id": str(global_event_id) if global_event_id else row.get('SOURCEURL') or row.get('sourceurl') or "",
+                    "id": str(global_event_id) if global_event_id else row_dict.get('SOURCEURL') or row_dict.get('sourceurl') or "",
                     "title": title,
-                    "url": row.get('SOURCEURL') or row.get('sourceurl') or "",
+                    "url": row_dict.get('SOURCEURL') or row_dict.get('sourceurl') or "",
                     "source": "GDELT",
-                    "published": datetime.strptime(str(row.get('DATEADDED') or row.get('dateadded')), "%Y%m%d%H%M%S").isoformat() + "Z" if row.get('DATEADDED') or row.get('dateadded') else datetime.utcnow().isoformat() + "Z",
+                    "published": datetime.strptime(str(row_dict.get('DATEADDED') or row_dict.get('dateadded')), "%Y%m%d%H%M%S").isoformat() + "Z" if row_dict.get('DATEADDED') or row_dict.get('dateadded') else datetime.utcnow().isoformat() + "Z",
                     "language": "",
-                    "sentiment": float(row.get('AvgTone') or row.get('avgtone') or 0.0),
+                    "sentiment": float(row_dict.get('AvgTone') or row_dict.get('avgtone') or 0.0),
                     "themes": [],
                     "locations": location_name or "",
                     "source_country": country or "",
@@ -137,12 +139,12 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                     "actor1": actor1,
                     "actor2": actor2,
                     "event_code": event_code,
-                    "goldstein_scale": float(row.get('GoldsteinScale') or row.get('goldsteinscale') or None),
-                    "num_mentions": row.get('NumMentions') or row.get('nummentions'),
-                    "num_sources": row.get('NumSources') or row.get('numsources'),
-                    "num_articles": row.get('NumArticles') or row.get('numarticles'),
-                    "quad_class": row.get('QuadClass') or row.get('quadclass'),
-                    "raw": dict(row.items())
+                    "goldstein_scale": float(row_dict.get('GoldsteinScale') or row_dict.get('goldsteinscale') or None),
+                    "num_mentions": row_dict.get('NumMentions') or row_dict.get('nummentions'),
+                    "num_sources": row_dict.get('NumSources') or row_dict.get('numsources'),
+                    "num_articles": row_dict.get('NumArticles') or row_dict.get('numarticles'),
+                    "quad_class": row_dict.get('QuadClass') or row_dict.get('quadclass'),
+                    "raw": row_dict
                 })
             except Exception as e:
                 logger.warning(f"Failed to parse GDELT row: {e}")
