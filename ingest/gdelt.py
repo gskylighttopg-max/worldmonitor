@@ -3,7 +3,6 @@ import json
 import logging
 from datetime import datetime, timedelta
 from google.cloud import bigquery
-from google.oauth2 import service_account
 
 logger = logging.getLogger(__name__)
 
@@ -14,20 +13,13 @@ logger = logging.getLogger(__name__)
 def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
     """
     Fetch GDELT events from BigQuery for the last N hours.
+    Uses default credentials (from GOOGLE_APPLICATION_CREDENTIALS env var).
     """
     try:
-        # Load credentials from service account key
-        creds_json = os.getenv("GCP_SERVICE_ACCOUNT_KEY")
         project_id = project_id or os.getenv("GCP_PROJECT_ID")
         
-        if not creds_json:
-            logger.warning("GCP_SERVICE_ACCOUNT_KEY not set, falling back to REST API")
-            return fetch_gdelt_rest(hours, max_records)
-        
-        creds = service_account.Credentials.from_service_account_info(
-            json.loads(creds_json)
-        )
-        client = bigquery.Client(credentials=creds, project=project_id)
+        # Use default credentials (picked up from GOOGLE_APPLICATION_CREDENTIALS)
+        client = bigquery.Client(project=project_id)
         
         # Calculate time window
         end_time = datetime.utcnow()
@@ -196,8 +188,8 @@ def fetch_gdelt(hours=24, max_records=2500):
     Main entry point - tries BigQuery first, falls back to REST.
     For 15-min cron, use hours=1, max_records=1000 with BigQuery.
     """
-    # Check if BigQuery credentials available
-    if os.getenv("GCP_SERVICE_ACCOUNT_KEY"):
+    # Check if BigQuery credentials available (via GOOGLE_APPLICATION_CREDENTIALS or GCP_SERVICE_ACCOUNT_KEY)
+    if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GCP_SERVICE_ACCOUNT_KEY"):
         # Always use BigQuery when credentials available (no rate limits)
         return fetch_gdelt_bigquery(hours=hours, max_records=max_records)
     else:
