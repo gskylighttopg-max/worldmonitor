@@ -31,7 +31,7 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
         query = f"""
         SELECT
             GlobalEventID as id,
-            Day,
+            SQLDATE as day,
             MonthYear,
             Year,
             FractionDate,
