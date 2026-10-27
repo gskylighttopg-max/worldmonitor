@@ -105,9 +105,24 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                 
                 global_event_id = row.get('id')  # This is GLOBALEVENTID from query alias
                 
+                # Build descriptive title from GDELT data
+                actor1 = row.get('Actor1Name') or 'Unknown Actor'
+                actor2 = row.get('Actor2Name') or 'Unknown Actor'
+                event_code = row.get('EventCode')
+                
+                # Create descriptive title: "Actor1 vs Actor2 (EventCode)"
+                if actor1 and actor2 and actor1 != 'Unknown Actor' and actor2 != 'Unknown Actor':
+                    title = f"{actor1} vs {actor2}"
+                    if event_code:
+                        title += f" ({event_code})"
+                elif event_code:
+                    title = f"GDELT Event: {event_code}"
+                else:
+                    title = "GDELT Event"
+                
                 events.append({
                     "id": str(global_event_id) if global_event_id else row.get('SOURCEURL'),
-                    "title": f"GDELT Event: {row.get('EventCode')}" if row.get('EventCode') else "GDELT Event",
+                    "title": title,
                     "url": row.get('SOURCEURL') or "",
                     "source": "GDELT",
                     "published": datetime.strptime(str(row.get('DATEADDED')), "%Y%m%d%H%M%S").isoformat() + "Z" if row.get('DATEADDED') else datetime.utcnow().isoformat() + "Z",
@@ -118,9 +133,9 @@ def fetch_gdelt_bigquery(hours=1, max_records=1000, project_id=None):
                     "source_country": country or "",
                     "lat": float(lat) if lat else None,
                     "lng": float(lng) if lng else None,
-                    "actor1": row.get('Actor1Name'),
-                    "actor2": row.get('Actor2Name'),
-                    "event_code": row.get('EventCode'),
+                    "actor1": actor1,
+                    "actor2": actor2,
+                    "event_code": event_code,
                     "goldstein_scale": float(row.get('GoldsteinScale')) if row.get('GoldsteinScale') else None,
                     "num_mentions": row.get('NumMentions'),
                     "num_sources": row.get('NumSources'),
