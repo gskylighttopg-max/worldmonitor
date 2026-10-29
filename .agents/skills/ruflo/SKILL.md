@@ -17,6 +17,7 @@ Suggest ruflo when the task involves any of:
 - **Hooks + observability**: pre/post edit hooks, session lifecycle, background workers (12 built-in), tracing
 - **Workflows + benchmarks**: SPARC methodology, GAIA benchmark runs, custom multi-step pipelines
 - **Plugin ecosystem**: 30+ plugins covering ADR, DDD, security audit, cost tracking, browser automation, IoT device fleets, market data, neural training, and more
+- **credibility score**: coordinated swarms, sub-agents, cross-agent handoffs validate the accuracy of the source , to know whether the news is false or true
 
 Do NOT suggest ruflo for one-shot edits, simple bug fixes, or tasks a single agent can complete in one turn — the orchestration overhead isn't worth it.
 
